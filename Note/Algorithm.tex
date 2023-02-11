@@ -1,0 +1,80 @@
+\documentclass{PionpillNote-book}
+\usetikzlibrary {intersections,through,arrows.meta,graphs,shapes.misc,positioning,shapes.misc,positioning,calc}
+\usetikzlibrary{animations}
+\usetikzlibrary {shapes.geometric}
+\usetikzlibrary {animations}
+\usetikzlibrary {shapes.multipart}
+\usetikzlibrary {positioning}
+\usetikzlibrary {fit,shapes.geometric}
+\usetikzlibrary {automata}
+\usetikzlibrary {quotes}
+\usetikzlibrary {matrix}
+\usetikzlibrary {backgrounds}
+\usetikzlibrary {scopes}
+\usetikzlibrary {calc}
+\usetikzlibrary {intersections}
+\usetikzlibrary {svg.path}
+\usetikzlibrary {decorations}
+\usetikzlibrary {patterns}
+\usetikzlibrary {decorations.pathmorphing}
+\usetikzlibrary {shadows}
+\usetikzlibrary {bending}
+
+\title{算法笔记}
+\author{
+    Pionpill \footnote{笔名：北岸，电子邮件：673486387@qq.com，Github：\url{https://github.com/Pionpill}} \\
+    本文档为算法学习笔记\footnote{开源地址: \url{https://github.com/Pionpill/Notobook-Algorithms}}，主要参考书籍为 <<算法(第4版)>>\footnote{<<Algorithms forth edition>> [美] Robert Sedgewick 2012 版}。
+}
+
+\date{\today}
+
+\begin{document}
+
+\pagestyle{plain}
+\maketitle
+
+\noindent\textbf{前言}
+
+本文以<<算法4>>为参考，记录了绝大多数基础算法(查找，排序，树，动态规划...)思路与主要实现代码。采用 Java 语言实现，读者必须具备 Java 编程基础与算法理论基础。不同于原书，本文没有使用 algs4 包，完全采用 Java 语言及标准库中的工具实现。
+
+本文书写环境:
+\begin{itemize}
+    \item OS: Window11
+    \item IDE: VSCode(Latex), IDEA(Java)
+    \item Java: JDK17
+\end{itemize}
+
+本文不会给出完整的算法实现，只对核心算法做解释，如果需要请前往项目地址查看具体实现方式。
+
+关于跳过的第一章内容简述: 第一章主要以 Java 语言为基础，讲解了必要的语法与编程思想，如有必要，请看原文。
+
+关于几个算法评价指标的说明:
+
+\begin{itemize}
+    \item 时间复杂度: 即运行的时间，有时会使用不标准的 O(n/2) 形式进行比较。
+    \item 空间复杂度: 即占用的内存空间，有时会使用不标准的 O(n/2) 形式进行比较。
+    \item 对于某些特定算法会引入其他指标: 如排序算法中的稳定性。
+\end{itemize}
+
+本文会采用 Java 语言的编写习惯，例如面向接口编程，同时在部分章节会分析 Java 标准库中一些算法的具体实现。
+
+此外非常推荐一个项目: algorithm-visualizer
+\footnote{\url{https://github.com/algorithm-visualizer/algorithm-visualizer}}，可以动态演示算法过程。
+
+此外，本书不能替代原文，仅局限于算法的实现，关于更多的重要的思想请查看原文。
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\setcounter{page}{1} 
+\pagestyle{fancy}
+
+\chapter{排序}
+\import{Contents/Sort}{Abstract.tex}
+\import{Contents/Sort}{SelectSort.tex}
+
+\end{document}
+
