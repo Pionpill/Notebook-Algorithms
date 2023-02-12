@@ -14,3 +14,12 @@
         \bottomrule
     \end{tabular}
 \end{table}
+
+此外，本人默认采用如下的方式进行排序:
+\begin{itemize}
+    \item 数据结构: 本文默认使用数组存储元素。
+    \item 排序顺序: 本文默认升序排序。
+    \item 数据类型: 本文默认使用 \texttt{Integer} 类型的数据；其他实现了 \texttt{Comparable} 接口的数据类型同样有效。
+\end{itemize}
+
+此外，本章对一些比较，交换等算法进行了封装，例如 \texttt{CollectionUtils.exchange()} 方法用于交换集合中元素位置 \texttt{MathUtils.isBig()} 用于判断元素大小。这样能够有效避免不同数据类型具体操作上的不同。这些方法通过名字就能知道功能，故不作详细解释。
