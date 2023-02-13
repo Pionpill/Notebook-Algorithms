@@ -1,0 +1,418 @@
+\section{归并排序}
+
+\subsection{分治思想}
+
+归并排序使用到了分而治之的思想，即将一个大的数组分为两个长度接近(长度差小于1)的数组，优先对小数组进行排序，再合并为大的数组。具体合并方式为两个小数组从左到右(小数组已经有序)挑选较小的元素插入到新数组中。在这个过程中有以下关键条件:
+
+\begin{itemize}
+  \item 必须保证小数组是有序的，归并的时候才能依次放入最小的元素。这迫使我们将数组最终划分为元素个数小于2的数组，因为对元素个数为2的数组进行归并时，左右只有一个元素也必然是最小的元素。
+\end{itemize}
+
+\begin{figure}[H]
+    \small
+    \centering
+    \begin{tikzpicture}[font=\small]
+        \begin{scope}
+            \node[align=right] (text) at (0,0) {原始数组(1)};
+            \node (1) at (2,0) {M};
+            \node (2) at (3,0) {E};
+            \node (3) at (4,0) {R};
+            \node (4) at (5,0) {G};
+            \node (5) at (6,0) {E};
+            \node (6) at (7,0) {S};
+            \node (7) at (8,0) {O};
+            \node (8) at (9,0) {R};
+            \node (9) at (10,0) {T};
+        \end{scope}
+        \begin{scope}[yshift=-0.5cm]
+            \node[align=right] (text) at (0,0) {拆分数组(2)};
+            \begin{scope}[color=red]
+              \node (1) at (2,0) {M};
+              \node (2) at (3,0) {E};
+              \node (3) at (4,0) {R};
+              \node (4) at (5,0) {G};
+              \node (5) at (6,0) {E};
+            \end{scope}
+            \draw (6.5,-0.25) -- (6.5,0.25);
+            \begin{scope}[color=blue]
+              \node (6) at (7,0) {S};
+              \node (7) at (8,0) {O};
+              \node (8) at (9,0) {R};
+              \node (9) at (10,0) {T};
+            \end{scope}
+        \end{scope}
+        \draw [-Stealth](6.5,-1) -- (6.5,-2) node[midway, left] {分别排序(递归或迭代)};
+        \begin{scope}[yshift=-2.5cm]
+            \node[align=right] (text) at (0,0) {左右排序(3)};
+            \begin{scope}[color=red]
+              \node (1) at (2,0) {E};
+              \node (2) at (3,0) {E};
+              \node (3) at (4,0) {G};
+              \node (4) at (5,0) {M};
+              \node (5) at (6,0) {R};
+            \end{scope}
+            \draw (6.5,-0.25) -- (6.5,0.25);
+            \begin{scope}[color=blue]
+              \node (6) at (7,0) {O};
+              \node (7) at (8,0) {R};
+              \node (8) at (9,0) {S};
+              \node (9) at (10,0) {T};
+            \end{scope}
+        \end{scope}
+        \begin{scope}[yshift=-5cm]
+          \node[align=right] (text) at (0,0) {整体归并(4)};
+            \draw[-Stealth, color=gray] (7,2) -- ++(0,-0.25)  -| (2,0.5);
+            \draw[-Stealth, color=red] (2,2) -- (2,0.5) node [left,midway,font=\scriptsize] {比较插入};
+            \node (1) at (2,0) {E};
+
+            \draw[-Stealth, color=gray] (7,2) -- ++(0,-0.5)  -| (3,0.5);
+            \draw[-Stealth, color=red] (3,2) -- (3,0.5);
+            \node (2) at (3,0) {E};
+            \node (3) at (4,0) {G};
+            \node (4) at (5,0) {M};
+            \node (...) at (4.5, 1) {......};
+            \draw[-Stealth, color=gray] (6,2) -- (6,0.5);
+            \draw[-Stealth, color=blue] (7,2) -- ++(0,-1)  -| (6,0.5);
+            \node (5) at (6,0) {O};
+            \node (6) at (7,0) {R};
+            \node (7) at (8,0) {R};
+            \node (8) at (9,0) {S};
+            \node (9) at (10,0) {T};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{归并排序示意图}
+    \label{fig:归并排序示意图}
+\end{figure}
+
+具体实现上需要采用如下手段:
+\begin{itemize}
+  \item 开辟新数组: 用于存储原始未排序的数组元素。如果每次归并都开辟一个新的临时数组，则会降低算法效率，更好的方法是最开始就开辟一个大小为 n 的数组，每次写入新数据。
+  \item 双指针: 分别记录两边数组需要比较的元素位置，如果越界，则表示某一边所有元素已插入完毕，只需依次插入剩下一侧元素即可。
+\end{itemize}
+
+\subsection{核心算法}
+
+这里我们先只考虑整体归并的算法如下:
+
+\begin{Java}
+private static void merge(Comparable[] arr, int low, int high) {
+    int mid = low + (high - low) / 2;
+    // temp 数组外部声明
+    System.arraycopy(arr, 0, temp, 0, arr.length);
+    int i = low;
+    int j = mid + 1;
+    for (int k = low; k <= high; k++) {
+        if (i > mid) arr[k] = temp[j++];
+        else if (j > high) arr[k] = temp[i++];
+        else if (MathUtils.isLess(temp[i], temp[j]))
+            arr[k] = temp[i++];
+        else
+            arr[k] = temp[j++];
+    }
+}
+\end{Java}
+
+接下来我们只需要保证左右两个数组有序即可，对于分而治之的算法，保证左右有序有两个方案: 自顶向下和自底向上。
+
+\subsection{递归与迭代实现}
+
+\subsubsection{递归: 自顶向下}
+
+自定向下的归并排序采用递归的方式保证子数组的顺序，将子数组不断拆分，直到有序(只有一个元素的数组必然有序)即可。
+
+\begin{figure}[H]
+    \small
+    \centering
+    \begin{tikzpicture}[font=\small]
+        \begin{scope}[color=gray]
+            \draw (-1,-6) -- (8,-6);
+            \node (text1) at (6,-5.75) {递归阶段};
+            \node (text2) at (6,-6.25) {排序阶段};
+        \end{scope}
+        \begin{scope}[color=white, ultra thick, minimum height=.5cm,minimum width=.5cm]
+            \begin{scope}
+                \node[draw, fill=red] (1) at (2,0) {M};
+                \node[draw, fill=red] (2) at (2.5,0) {E};
+                \node[draw, fill=red] (3) at (3,0) {R};
+                \node[draw, fill=red] (4) at (3.5,0) {G};
+                \node[draw, fill=red] (5) at (4,0) {E};
+                \node[draw, fill=red] (6) at (4.5,0) {S};
+                \node[draw, fill=red] (7) at (5,0) {O};
+                \node[draw, fill=red] (8) at (5.5,0) {R};
+                \node[draw, fill=red] (9) at (6,0) {T};
+            \end{scope}
+            \begin{scope}[yshift=-1.5cm]
+              \begin{scope}[xshift=-1cm]
+                \node[draw, fill=red] (1) at (2,0) {M};
+                \node[draw, fill=red] (2) at (2.5,0) {E};
+                \node[draw, fill=red] (3) at (3,0) {R};
+                \node[draw, fill=red] (4) at (3.5,0) {G};
+                \node[draw, fill=red] (5) at (4,0) {E};
+              \end{scope}
+              \begin{scope}[xshift=1cm]
+                \node[draw, fill=red] (6) at (4.5,0) {S};
+                \node[draw, fill=red] (7) at (5,0) {O};
+                \node[draw, fill=red] (8) at (5.5,0) {R};
+                \node[draw, fill=red] (9) at (6,0) {T};
+              \end{scope}
+            \end{scope}
+            \begin{scope}[yshift=-3cm]
+              \begin{scope}[xshift=-1.5cm]
+                \node[draw, fill=red] (1) at (2,0) {M};
+                \node[draw, fill=red] (2) at (2.5,0) {E};
+                \node[draw, fill=red] (3) at (3,0) {R};
+              \end{scope}
+              \begin{scope}[xshift=-0.5cm]
+                \node[draw, fill=red] (4) at (3.5,0) {G};
+                \node[draw, fill=red] (5) at (4,0) {E};
+              \end{scope}
+            \end{scope}
+            \begin{scope}[yshift=-4.5cm]
+              \begin{scope}[xshift=-1.75cm]
+                \node[draw, fill=red] (1) at (2,0) {M};
+                \node[draw, fill=red] (2) at (2.5,0) {E};
+              \end{scope}
+              \begin{scope}[xshift=-1.25cm]
+                \node[draw, fill=red] (3) at (3,0) {R};
+              \end{scope}
+            \end{scope}
+            \begin{scope}[yshift=-6cm]
+              \node[draw, fill=red] (1) at (0,0) {M};
+              \node[draw, fill=red] (2) at (1,0) {E};
+              \node[draw, fill=red] (3) at (2,0) {R};
+            \end{scope}
+        \end{scope}
+        \begin{scope}[color=white, ultra thick, minimum height=.5cm,minimum width=.5cm]
+          \begin{scope}[yshift=-7.5cm]
+            \begin{scope}[xshift=-1.75cm]
+              \node[draw, fill=blue!60] (1) at (2,0) {E};
+              \node[draw, fill=blue!60] (2) at (2.5,0) {M};
+            \end{scope}
+            \begin{scope}[xshift=-1.25cm]
+              \node[draw, fill=blue!60] (3) at (3,0) {R};
+            \end{scope}
+          \end{scope}
+          \begin{scope}[yshift=-9cm, xshift=-1.5cm]
+            \node[draw, fill=blue!60] (1) at (2,0) {E};
+            \node[draw, fill=blue!60] (2) at (2.5,0) {M};
+            \node[draw, fill=blue!60] (3) at (3,0) {R};
+          \end{scope}
+        \end{scope}
+        \begin{scope}
+          \begin{scope}
+            \draw[-Stealth, color=red!60] (4,-0.25) -- (2,-1.25);
+            \draw[-Stealth, color=red!60] (4,-0.25) -- (6,-1.25);
+            \draw[-Stealth, color=red!60] (2,-1.75) -- (1,-2.75);
+            \draw[-Stealth, color=red!60] (2,-1.75) -- (3,-2.75);
+            \draw[-Stealth, color=red!60]  (1,-3.25) -- (0.5, -4.25);
+            \draw[-Stealth, color=red!60]  (1,-3.25) -- (1.5, -4.25);
+            \draw[-Stealth, color=red!60]  (0.5, -4.75) -- (0,-5.75);
+            \draw[-Stealth, color=red!60]  (0.5, -4.75) -- (1,-5.75);
+            \draw[-Stealth, color=red!60]  (1.75, -4.75) -- (2,-5.75);
+            \draw[-Stealth, color=blue!40]  (0,-6.25) -- (0.5, -7.25) ;
+            \draw[-Stealth, color=blue!40]  (1,-6.25) -- (0.5, -7.25) ;
+            \draw[-Stealth, color=blue!40]  (2,-6.25) -- (1.75, -7.25);
+            \draw[-Stealth, color=blue!40]  (0.5, -7.75) -- (1,-8.75);
+            \draw[-Stealth, color=blue!40]  (1.75, -7.75) -- (1,-8.75);
+            \node at (1,-10) {......};
+          \end{scope}
+        \end{scope}
+    \end{tikzpicture}
+    \caption{自顶向下归并排序示意图}
+    \label{fig:自顶向下归并排序示意图}
+\end{figure}
+
+从上图我们可以算出，递归与排序次数均为 $\lceil \log_2 n \rceil$
+
+具体的实现方案是不断比较 low 与 high 值，直到两者相等:
+
+\begin{Java}
+private static Comparable[] temp;
+
+public static void mergeSort(Comparable[] arr) {
+    temp = new Comparable[arr.length];
+    recursiveSort(arr, 0, arr.length - 1);
+}
+
+private static void recursiveSort(Comparable[] a, int low, int high) {
+    if (low >= high)
+        return;
+    int mid = low + (high - low) / 2;
+    recursiveSort(a, low, mid);
+    recursiveSort(a, mid + 1, high);
+    merge(a, low, high);
+}
+\end{Java}
+
+递归的方式很简洁，但有它的先天缺陷，很可能栈溢出。直到递归出口之前，函数要不断调用本身，而函数调用是有时间和空间的消耗的：每一次函数调用，都需要在内存栈中分配空间以保存参数、返回地址以及临时变量，而往栈中压入数据和弹出数据都需要时间。
+
+递归所能实现的算法往往都能通过迭代实现。
+
+\subsubsection{迭代: 自底向上}
+
+自底向上的归并排序使用迭代的方式保证子数组的顺序，既然长度为 1 的数组必然有序，那么我每 2 个元素排序一次，再 4 个排序一次... $2^n$ 个排序 ... 直到 n 个排序不就可以了吗。
+
+\begin{figure}[H]
+    \small
+    \centering
+    \begin{tikzpicture}[font=\small]
+        \begin{scope}[color=white, ultra thick, minimum height=.5cm,minimum width=.5cm]
+            \begin{scope}
+              \node[fill=red] (1) at (0,0) {M};
+              \node[fill=red] (2) at (1,0) {E};
+              \node[fill=red] (3) at (2,0) {R};
+              \node[fill=red] (4) at (3,0) {G};
+              \node[fill=red] (5) at (4,0) {E};
+              \node[fill=red] (6) at (5,0) {S};
+              \node[fill=red] (7) at (6,0) {O};
+              \node[fill=red] (8) at (7,0) {R};
+              \node[fill=red] (9) at (8,0) {T};
+            \end{scope}
+            \begin{scope}[yshift=-1.5cm]
+              \node[color=black] at (-2,0) {第一次迭代};
+              \node[draw, fill=blue!60] at (0.25,0) {E};
+              \node[draw, fill=blue!60] at (0.75,0) {M};
+              \node[draw, fill=blue!60] at (2.25,0) {G};
+              \node[draw, fill=blue!60] at (2.75,0) {R};
+              \node[draw, fill=blue!60] at (4.25,0) {E};
+              \node[draw, fill=blue!60] at (4.75,0) {S};
+              \node[draw, fill=blue!60] at (6.25,0) {O};
+              \node[draw, fill=blue!60] at (6.75,0) {R};
+              \node[draw, fill=blue!60] at (8,0) {T};
+            \end{scope}
+            \begin{scope}[yshift=-3cm]
+              \node[color=black] at (-2,0) {第二次迭代};
+              \node[draw, fill=blue!60] at (0.75,0) {E};
+              \node[draw, fill=blue!60] at (1.25,0) {G};
+              \node[draw, fill=blue!60] at (1.75,0) {M};
+              \node[draw, fill=blue!60] at (2.25,0) {R};
+              \node[draw, fill=blue!60] at (4.75,0) {E};
+              \node[draw, fill=blue!60] at (5.25,0) {S};
+              \node[draw, fill=blue!60] at (5.75,0) {O};
+              \node[draw, fill=blue!60] at (6.25,0) {R};
+              \node[draw, fill=blue!60] at (8,0) {T};
+            \end{scope}
+            \begin{scope}[yshift=-4.5cm]
+              \node[color=black] at (-2,0) {第三次迭代};
+              \node[draw, fill=blue!60] at (1.75,0) {E};
+              \node[draw, fill=blue!60] at (2.25,0) {E};
+              \node[draw, fill=blue!60] at (2.75,0) {G};
+              \node[draw, fill=blue!60] at (3.25,0) {M};
+              \node[draw, fill=blue!60] at (3.75,0) {O};
+              \node[draw, fill=blue!60] at (4.25,0) {R};
+              \node[draw, fill=blue!60] at (4.75,0) {R};
+              \node[draw, fill=blue!60] at (5.25,0) {S};
+              \node[draw, fill=blue!60] at (7,0) {T};
+            \end{scope}
+            \begin{scope}[yshift=-6cm, xshift=1cm]
+              \node[color=black] at (-3,0) {第四次迭代};
+              \node[draw, fill=blue!60] at (1.75,0) {E};
+              \node[draw, fill=blue!60] at (2.25,0) {E};
+              \node[draw, fill=blue!60] at (2.75,0) {G};
+              \node[draw, fill=blue!60] at (3.25,0) {M};
+              \node[draw, fill=blue!60] at (3.75,0) {O};
+              \node[draw, fill=blue!60] at (4.25,0) {R};
+              \node[draw, fill=blue!60] at (4.75,0) {R};
+              \node[draw, fill=blue!60] at (5.25,0) {S};
+              \node[draw, fill=blue!60] at (5.75,0) {T};
+            \end{scope}
+          \end{scope}
+          \begin{scope}[color=blue!40]
+            \draw[-Stealth] (0,-0.25) -- (0.5,-1.25);
+            \draw[-Stealth] (1,-0.25) -- (0.5,-1.25);
+            \draw[-Stealth] (2,-0.25) -- (2.5,-1.25);
+            \draw[-Stealth] (3,-0.25) -- (2.5,-1.25);
+            \draw[-Stealth] (4,-0.25) -- (4.5,-1.25);
+            \draw[-Stealth] (5,-0.25) -- (4.5,-1.25);
+            \draw[-Stealth] (6,-0.25) -- (6.5,-1.25);
+            \draw[-Stealth] (7,-0.25) -- (6.5,-1.25);
+            \draw[-Stealth] (8,-0.25) -- (8,-1.25);
+
+            \draw[-Stealth] (0.5,-1.75) -- (1.5, -2.75);
+            \draw[-Stealth] (2.5,-1.75) -- (1.5, -2.75);
+            \draw[-Stealth] (4.5,-1.75) -- (5.5, -2.75);
+            \draw[-Stealth] (6.5,-1.75) -- (5.5, -2.75);
+            \draw[-Stealth] (8,-1.75) -- (8,-2.75);
+
+            \draw[-Stealth] (1.5, -3.25) -- (3.5,-4.25);
+            \draw[-Stealth] (5.5, -3.25) -- (3.5,-4.25);
+            \draw[-Stealth] (8,-3.25) -- (7,-4.25);
+
+            \draw[-Stealth] (3.5,-4.75) -- (5,-5.75);
+            \draw[-Stealth] (7,-4.75) -- (5,-5.75);
+          \end{scope}
+    \end{tikzpicture}
+    \caption{自底向上迭代排序示意图}
+    \label{fig:自底向上迭代排序示意图}
+\end{figure}
+
+从上图我们可以算出，迭代次数为 $\lceil \log_2 n \rceil$
+
+迭代排序与归并有一点不同，需要手动指定 \texttt{mid} 位置。假如我们有 12 个元素需要归并排序，最终子数组个数分别为 8 和 4。如果此时的 \texttt{mid} 下标不再是 (7+3)/2 = 5, 而是 0 + 8 - 1 = 7。
+
+\begin{Java}
+private static Comparable[] temp;
+
+public static void mergeSort(Comparable[] arr) {
+    temp = new Comparable[arr.length];
+    iterateSort(arr);
+}
+
+private static void iterateSort(Comparable[] a) {
+    // 子数组大小, 两个子数组加起来不超过原数组大小
+    for (int size = 1; size < a.length; size *= 2) {
+        for (int low = 0; low < a.length; low += 2 * size) {
+            iterateMerge(a, low, low + size - 1, Math.min(a.length - 1, low + 2 * size - 1));
+        }
+    }
+}
+
+private static void iterateMerge(Comparable[] arr, int low, int mid, int high) {
+    System.arraycopy(arr, 0, temp, 0, arr.length);
+    int i = low;
+    int j = mid + 1;
+    for (int k = low; k <= high; k++) {
+        if (i > mid) arr[k] = temp[j++];
+        else if (j > high) arr[k] = temp[i++];
+        else if (MathUtils.isLess(temp[i], temp[j]))
+            arr[k] = temp[i++];
+        else
+            arr[k] = temp[j++];
+    }
+}
+\end{Java}
+
+\subsubsection*{两种排序方式的比较}
+
+迭代与递归的差别如下:
+\begin{table}[H]
+    \centering
+    \caption{迭代与递归}
+    \label{table:迭代与递归}
+    \setlength{\tabcolsep}{4mm}
+    \begin{tabular}{c|ccp{5cm}}
+        \toprule
+        \textbf{} & \textbf{定义} & \textbf{优点} & \textbf{缺点} \\
+        \midrule
+        递归 & 函数调用自身 & 代码简洁易读 & 不断调用函数，大量资源浪费，容易栈溢出。 \\
+        \midrule
+        迭代 & 原值推新值 & 效率高，无额外开销 & 代码较长，相对不容易理解 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+在实际测试中，处理百万级数据，迭代要略快于递归，但计算时间仍处于同一数量级。
+
+\subsection{算法评价}
+
+归并排序时间复杂度具体怎么算的请参考原书或其他资料，涉及大量数学运算，所以不做详细说明。
+
+\begin{itemize}
+  \item 时间复杂度: $O(n\log_2 n)$。
+  \item 空间复杂度: $O(n)$。
+  \item 稳定性: 稳定。
+\end{itemize}
+
+总的来说，归并排序有他显著的优点: 稳定。他不会改变相同元素位置，其他时间复杂度相同的算法大部分都是不稳定的。但代价是需要格外 $O(n)$ 的空间。此外，即使所需时间在同一数量级。归并排序也是较慢的一种排序方案。
+
+\newpage

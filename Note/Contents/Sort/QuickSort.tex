@@ -1,0 +1,249 @@
+\section{快速排序}
+
+快速排序是使用最广泛的排序方法，同时也是针对绝大部分数据类型都适用的速度较快的一种排序方法。
+
+\subsection{分治思想}
+
+快速排序和归并排序都采用了分治的思想。不同的是，归并排序将两个子数组排序后再合并，而快速排序是通过元素\textbf{划分}子数组(一边元素大，一边元素小)，两个子数组都有序整个数组也自然有序了。
+
+归并排序递归调用发生在处理整个数组之前，快速排序则发生在处理整个数组之后。
+
+简而言之，快速排序选择某一个元素(通常是最左边的元素)作为划分点，比其小的元素放在左边，比起大的元素放在右边。这样划分之后，再对左右两个子数组进行递归划分。
+
+\begin{figure}[H]
+  \small
+  \centering
+  \begin{tikzpicture}[font=\small]
+      \begin{scope}
+          \node[align=right] (text) at (0,0) {原始数组(1)};
+          \node (1) at (2,0) {Q};
+          \node (2) at (3,0) {U};
+          \node (3) at (4,0) {I};
+          \node (4) at (5,0) {C};
+          \node (5) at (6,0) {K};
+          \node (6) at (7,0) {S};
+          \node (7) at (8,0) {O};
+          \node (8) at (9,0) {R};
+          \node (9) at (10,0) {T};
+      \end{scope}
+      \draw [-Stealth](6,-0.25) -- (6,-1.25) node[midway, left] {选择元素 Q 进行划分};
+      \begin{scope}[yshift=-1.5cm]
+          \node[align=right] (text) at (0,0) {划分数组(2)};
+          \begin{scope}[color=red]
+            \node (1) at (2,0) {I};
+            \node (1) at (3,0) {C};
+            \node (1) at (4,0) {K};
+            \node (1) at (5,0) {O};
+          \end{scope}
+          \node (5) at (6,0) {Q};
+          \begin{scope}[color=blue]
+            \node (6) at (7,0) {U};
+            \node (7) at (8,0) {S};
+            \node (8) at (9,0) {R};
+            \node (9) at (10,0) {T};
+          \end{scope}
+      \end{scope}
+      \draw [-Stealth](6,-1.75) -- (6,-2.75) node[midway, left] {递归划分};
+      \begin{scope}[yshift=-3cm]
+        \node[align=right] (text) at (0,0) {左右递归(3)};
+        \begin{scope}[color=red]
+          \node (1) at (2,0) {C};
+          \node (1) at (3,0) {I};
+          \node (1) at (4,0) {K};
+          \node (1) at (5,0) {O};
+        \end{scope}
+        \node (5) at (6,0) {Q};
+        \begin{scope}[color=gray!60!white]
+          \node (6) at (7,0) {U};
+          \node (7) at (8,0) {S};
+          \node (8) at (9,0) {R};
+          \node (9) at (10,0) {T};
+        \end{scope}
+      \end{scope}
+      \begin{scope}[yshift=-3.5cm]
+        \begin{scope}[color=gray!60!white]
+          \node (1) at (2,0) {C};
+          \node (1) at (3,0) {I};
+          \node (1) at (4,0) {K};
+          \node (1) at (5,0) {O};
+        \end{scope}
+        \node (5) at (6,0) {Q};
+        \begin{scope}[color=blue]
+          \node (6) at (7,0) {R};
+          \node (7) at (8,0) {S};
+          \node (8) at (9,0) {T};
+          \node (9) at (10,0) {U};
+        \end{scope}
+      \end{scope}
+      \draw [-Stealth](6,-3.75) -- (6,-4.75);
+      \begin{scope}[yshift=-5cm]
+        \node[align=right] (text) at (0,0) {结果(4)};
+        \node (1) at (2,0) {C};
+        \node (2) at (3,0) {I};
+        \node (3) at (4,0) {K};
+        \node (4) at (5,0) {O};
+        \node (5) at (6,0) {Q};
+        \node (6) at (7,0) {R};
+        \node (7) at (8,0) {S};
+        \node (8) at (9,0) {T};
+        \node (9) at (10,0) {U};
+      \end{scope}
+  \end{tikzpicture}
+  \caption{快速排序示意图}
+  \label{fig:快速排序示意图}
+\end{figure}
+
+递归我们在上一节已经说明过了，现在只需要得到 $(1) \rightarrow (2)$ 的算法即可，递归过程如下:
+
+\begin{Java}
+public static void quickSort(Comparable[] arr) {
+    sort(arr, 0, arr.length - 1);
+}
+
+private static void sort(Comparable[] arr, int low, int high) {
+    if (low >= high)
+        return;
+    int mid = partition(arr, low, high);
+    sort(arr, low, mid - 1);
+    sort(arr, mid + 1, high);
+}
+\end{Java}
+
+\subsection{核心算法}
+
+\subsubsection{双指针法}
+
+最简单的方法是采用双指针:
+\begin{itemize}
+  \item 第一个指针从左到右移动，直到遇到比划分点元素大的元素，停止。
+  \item 第二个指针从右到左移动，直到遇到比划分点元素小的元素，停止。
+  \item 两个指针都停止后，交换两个指针的元素。
+  \item 重复上述过程，直到指针碰撞。
+\end{itemize}
+
+\begin{figure}[H]
+    \small
+    \centering
+    \begin{tikzpicture}[font=\small]
+      \begin{scope}[color=white, ultra thick, minimum height=.5cm,minimum width=.5cm]
+        \begin{scope}
+          \node[fill=black] (1) at (0,0) {Q};
+          \node[color=black] (p1) at (1,1) {p1};
+          \node[fill=red] (2) at (1,0) {U};
+          \draw[-Stealth, color=black, thin] (p1) -- (2);
+          \node[fill=red] (3) at (2,0) {I};
+          \node[fill=red] (4) at (3,0) {C};
+          \node[fill=red] (5) at (4,0) {K};
+          \node[fill=red] (6) at (5,0) {S};
+          \node[fill=red] (7) at (6,0) {O};
+          \node[fill=red] (8) at (7,0) {R};
+          \node[color=black] (p2) at (8,1) {p2};
+          \node[fill=red] (9) at (8,0) {T};
+          \draw[-Stealth, color=black, thin] (p2) -- (9);
+        \end{scope}
+        \draw[-Stealth, color=black, thin] (0,-0.5) -- (0,-1.5) node [midway, left] {第一轮移动};
+        \begin{scope}[yshift=-2cm]
+          \node[fill=black] (1) at (0,0) {Q};
+          \node[color=black] (p1) at (1,1) {p1};
+          \node[fill=green!60!black] (2) at (1,0) {U};
+          \draw[-Stealth, color=black, thin] (p1) -- (2);
+          \node[fill=red] (3) at (2,0) {I};
+          \node[fill=red] (4) at (3,0) {C};
+          \node[fill=red] (5) at (4,0) {K};
+          \node[fill=red] (6) at (5,0) {S};
+          \node[color=black] (p2) at (6,1) {p2};
+          \node[fill=green!60!black] (7) at (6,0) {O};
+          \node[fill=blue!60] (8) at (7,0) {R};
+          \node[fill=blue!60] (9) at (8,0) {T};
+          \draw[-Stealth, color=black, thin] (p2) -- (7);
+        \end{scope}
+        \draw[-Stealth, color=black, thin] (0,-2.5) -- (0,-3.5) node [midway, left] {交换元素位置};
+        \begin{scope}[yshift=-4cm]
+          \node[fill=black] (1) at (0,0) {Q};
+          \node[color=black] (p1) at (1,1) {p1};
+          \node[fill=blue!60] (2) at (1,0) {O};
+          \draw[-Stealth, color=black, thin] (p1) -- (2);
+          \node[fill=red] (3) at (2,0) {I};
+          \node[fill=red] (4) at (3,0) {C};
+          \node[fill=red] (5) at (4,0) {K};
+          \node[fill=red] (6) at (5,0) {S};
+          \node[color=black] (p2) at (6,1) {p2};
+          \node[fill=blue!60] (7) at (6,0) {U};
+          \node[fill=blue!60] (8) at (7,0) {R};
+          \node[fill=blue!60] (9) at (8,0) {T};
+          \draw[-Stealth, color=black, thin] (p2) -- (7);
+        \end{scope}
+        \draw[-Stealth, color=black, thin] (0,-4.5) -- (0,-5.5) node [midway, left] {经过多轮移动};
+        \begin{scope}[yshift=-6cm]
+          \node[fill=black] (1) at (0,0) {Q};
+          \node[fill=blue!60] (2) at (1,0) {O};
+          \node[fill=blue!60] (3) at (2,0) {I};
+          \node[fill=blue!60] (4) at (3,0) {C};
+          \node[fill=green!60!black] (5) at (4,0) {K};
+          \node[fill=green!60!black] (6) at (5,0) {S};
+          \node[fill=blue!60] (7) at (6,0) {U};
+          \node[fill=blue!60] (8) at (7,0) {R};
+          \node[fill=blue!60] (9) at (8,0) {T};
+          \node[color=black] (p1) at (5,1) {p1};
+          \draw[-Stealth, color=black, thin] (p1) -- (6);
+          \node[color=black] (p2) at (4,1) {p2};
+          \draw[-Stealth, color=black, thin] (p2) -- (5);
+        \end{scope}
+        \draw[-Stealth, color=black, thin] (0,-6.5) -- (0,-7.5) node [midway, left] {p1>p2, 交换};
+        \begin{scope}[yshift=-8cm]
+          \node[fill=blue!60] (1) at (0,0) {K};
+          \node[fill=blue!60] (2) at (1,0) {O};
+          \node[fill=blue!60] (3) at (2,0) {I};
+          \node[fill=blue!60] (4) at (3,0) {C};
+          \node[fill=black] (5) at (4,0) {Q};
+          \node[fill=blue!60] (6) at (5,0) {S};
+          \node[fill=blue!60] (7) at (6,0) {U};
+          \node[fill=blue!60] (8) at (7,0) {R};
+          \node[fill=blue!60] (9) at (8,0) {T};
+          \node[color=black] (p1) at (5,1) {p1};
+          \draw[-Stealth, color=black, thin] (p1) -- (6);
+          \node[color=black] (p2) at (4,1) {p2};
+          \draw[-Stealth, color=black, thin] (p2) -- (5);
+        \end{scope}
+        \node[color = black] at (4,-9) {返回 p2};
+      \end{scope}
+    \end{tikzpicture}
+    \caption{双指针快速排序}
+    \label{fig:双指针快速排序}
+\end{figure}
+
+此外我们必须考虑两种极端情况，一是数组元素有序，例如 1,2,3,4; 4,3,2,1。而是数组元素最小，例如 1,2; 2,1。
+\begin{itemize}
+  \item 在第一种情况下，如果是 1,2,3,4: p2 最终将指向 1, 然后 1 与本身交换，这没什么问题; 如果是 4,3,2,1: p1 会直接超出范围，这是不允许的，因此 p1 <= high。
+  \item 在第二种情况下, 如果是  1,2: p2 指向 1 与自己交换没有问题；如果是 2,1: p1 指向1, p2 指向1, 1 与 2 交换，也没什么问题。
+\end{itemize}
+
+因此我们只需要判断 p1 <= high 即可，p2 >= low 没有必要。
+
+\begin{Java}
+private static int partition(Comparable[] arr, int low, int high) {
+    Comparable v= arr[low];
+    int p1 = low + 1;
+    int p2 = high;
+    while (true) {
+        while (MathUtils.isLess(arr[p1], v)) {
+            if (p1 == high)
+                break;
+            p1++;
+        }
+        while (MathUtils.isBig(arr[p2], v)) {
+            p2--;
+        }
+        if (p1 >= p2) break;
+        CollectionUtils.exchange(arr, p1, p2);
+    }
+    CollectionUtils.exchange(arr, low, p2);
+    return p2;
+}
+\end{Java}
+
+和归并类似，至多 $\lceil \log_2 n \rceil$ 此运算即可完成递归。
+
+\subsubsection{三向切分}
+
+快速排序发展的过程中遇到一个棘手的问题，如果有太多值相同的元素，快速排序会傻乎乎地将它们随机放在一边，如果能将这些值集中在中间位置，将显著提高快速排序针对这类数据模型的计算速度。

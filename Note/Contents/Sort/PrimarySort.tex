@@ -138,7 +138,9 @@ private static void stepSort(Comparable[] a, int h) {
 希尔排序的初始步长 h 有很多种取法，究竟哪一种是最优解尚无定论，一般采用上述方式获取并每次将步长缩小三倍(所需排序的元素扩大三倍)。
 
 \begin{itemize}
-  \item 时间复杂度: $O(n^{1.3})$ (比较难计算，介于 $O(n^2)$ 与 $O(n\log n)$ 之间)。
+  \item 时间复杂度: $O(n^{1.3})$ (介于 $O(n^1)$ 与 $O(n^2)$ 之间)。
   \item 空间复杂度: $O(1)$ 无需格外空间。
   \item 稳定性: 不稳定。
 \end{itemize}
+
+\newpage
