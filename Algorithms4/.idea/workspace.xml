@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="0834c05a-6c38-4514-b175-bfe3cc6d9526" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../Note/Algorithm.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../Note/Algorithm.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Note/Contents/Sort/PrimarySort.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../Note/Contents/Sort/PrimarySort.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Note/Contents/Sort/Abstract.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../Note/Contents/Sort/Abstract.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Note/Contents/Sort/MergeSort.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../Note/Contents/Sort/MergeSort.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Note/Contents/Sort/QuickSort.tex" beforeDir="false" afterPath="$PROJECT_DIR$/../Note/Contents/Sort/QuickSort.tex" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,15 +34,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/Pionpill/Projects/Code/Notebook/Notobook-Algorithms/Algorithms4"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Pionpill/Projects/Code/Notebook/Notobook-Algorithms/Algorithms4&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Application.SortMain">
     <configuration name="BubbleSort" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="pionpill.algorithm.sort.BubbleSort" />
@@ -102,7 +104,8 @@
       <workItem from="1676091434338" duration="666000" />
       <workItem from="1676092139465" duration="707000" />
       <workItem from="1676092861867" duration="566000" />
-      <workItem from="1676257731016" duration="12264000" />
+      <workItem from="1676257731016" duration="22280000" />
+      <workItem from="1676524395228" duration="535000" />
     </task>
     <servers />
   </component>

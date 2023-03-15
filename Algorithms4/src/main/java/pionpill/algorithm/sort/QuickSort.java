@@ -4,10 +4,11 @@ import pionpill.algorithm.utils.CollectionUtils;
 import pionpill.algorithm.utils.MathUtils;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 public class QuickSort {
     public static void quickSort(Comparable[] arr) {
-        sort(arr, 0, arr.length - 1);
+        quick3waySort(arr, 0, arr.length - 1);
     }
 
     private static void sort(Comparable[] arr, int low, int high) {
@@ -19,7 +20,7 @@ public class QuickSort {
     }
 
     private static int partition(Comparable[] arr, int low, int high) {
-        Comparable v= arr[low];
+        Comparable v = arr[low];
         int p1 = low + 1;
         int p2 = high;
         while (true) {
@@ -36,5 +37,23 @@ public class QuickSort {
         }
         CollectionUtils.exchange(arr, low, p2);
         return p2;
+    }
+
+    public static void quick3waySort(Comparable[] arr, int low, int high) {
+        if (high <= low)
+            return;
+        int p1 = low, p2 = low + 1, p3 = high;
+        Comparable v = arr[low];
+        while (p2 <= p3) {
+            int cmp = arr[p2].compareTo(v);
+            if (cmp < 0)
+                CollectionUtils.exchange(arr, p1++, p2++);
+            else if (cmp > 0)
+                CollectionUtils.exchange(arr, p2, p3--);
+            else
+                p2++;
+        }
+        quick3waySort(arr, low, p1 - 1);
+        quick3waySort(arr, p3 + 1, high);
     }
 }

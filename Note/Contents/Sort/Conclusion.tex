@@ -1,0 +1,28 @@
+\section{排序算法总结}
+
+\subsection{通用排序算法比较}
+
+前面说明的七种算法都属于通用排序算法，在 Java 中只要实现了 \texttt{Comparable} 接口就可以使用。这几种算法总结如下:
+
+\begin{table}[H]
+    \small
+    \centering
+    \caption{通用排序算法比较}
+    \label{table:通用排序算法比较}
+    \setlength{\tabcolsep}{2mm}
+    \begin{tabular}{c|ccccp{2.25cm}p{2.25cm}p{2.25cm}}
+        \toprule
+        \textbf{排序算法} & \textbf{时间} & \textbf{时间(最坏)} & \textbf{空间} & \textbf{稳定性} & \textbf{优点} & \textbf{缺点} & \textbf{适用范围} \\
+        \midrule
+        冒泡排序 & $O(n^2)$ & $O(n^2)$ & $O(1)$ & 稳定 & - & - & - \\
+        选择排序 & $O(n^2)$ & $O(n^2)$ & $O(1)$ & 不稳定 & - & - & - \\
+        插入排序 & $O(n^2)$ & $O(n^2)$ & $O(1)$ & 稳定 & - & - & - \\
+        \midrule
+        希尔排序 & $O(n^{1.3})$ & $O(n^2)$ & $O(1)$ & 不稳定 & 比下有余 & 比上不足 & 备胎 \\
+        \midrule
+        归并排序 & $O(n \log_2 n)$ & $O(n \log_2 n)$ & $O(n)$ & 稳定 & 非常稳定 & 额外空间 & 数据量小 \\
+        快速排序 & $O(n \log_2 n)$ & $O(n^2)$ & $O(\log_2 n)$ & 不稳定 & 缓存命中率高 & 时间不稳定 & 数据量大随机 \\
+        堆排序 & $O(n \log_2 n)$ & $O(n \log_2 n)$ & $O(1)$ & 不稳定 & 对数级别运算 & 缓存命中率低 & 优先队列 \\
+        \bottomrule
+    \end{tabular}
+\end{table}

@@ -1,5 +1,7 @@
 \section{快速排序}
 
+动态演示: \url{https://algorithm-visualizer.org/divide-and-conquer/quicksort}
+
 快速排序是使用最广泛的排序方法，同时也是针对绝大部分数据类型都适用的速度较快的一种排序方法。
 
 \subsection{分治思想}
@@ -247,3 +249,67 @@ private static int partition(Comparable[] arr, int low, int high) {
 \subsubsection{三向切分}
 
 快速排序发展的过程中遇到一个棘手的问题，如果有太多值相同的元素，快速排序会傻乎乎地将它们随机放在一边，如果能将这些值集中在中间位置，将显著提高快速排序针对这类数据模型的计算速度。
+
+一个常用的方案是使用三向切分，即将元素分为小于，等于，大于三部分。具体的实现方案是使用三个指针。
+\begin{itemize}
+  \item p1: 指向首个元素，进行右移，保证其左边的元素均小于划分元素。
+  \item p2: 指向第二个元素，承担比较的功能。
+  \item p3: 指向最后一个元素，进行左移，保证其右边的元素均大于划分元素。
+\end{itemize}
+
+最终，p1 将指向首个值等于划分元素的元素，p3 将指向最后一个值等于划分元素的元素。p2 在每次遇到值等于划分元素的元素时进行一次移动。
+
+用 v 表示切分元素，那么逻辑如下:
+\begin{itemize}
+  \item 如果 arr[p2] < v: 元素移动到左侧, 交换 p1,p2 所指的元素; exchange(arr,p1,p2), p1++。
+  \item 如果 arr[p2] = v: 元素无需移动, p2 移动到下一个元素; p2++。
+  \item 如果 arr[p2] > v: 元素移动到右侧, 交换 p2,p3 所指的元素; exchange(arr,p2,p3), p3--。
+\end{itemize}
+
+关于指针移动的说明:
+
+\begin{itemize}
+  \item p1++: 说明 p1 所指的元素确定小于 v。
+  \item p2++: 说明已经完成了 p2 所指向值的划分。
+  \item p3--: 说明 p3 所指的元素确定大于 v。
+\end{itemize}
+
+实际上，当 arr[p2] < v 时: 可以进行 p2++ 省略一次比较, 因为从第一次 exchange(arr,p1,p2) 开始, p1 所指向的值始终等于 v。原因: p1 左侧值小于 v, p2 扫过的区域值等于 v, 而初始 p2=p1+1。
+
+具体算法如下:
+
+\begin{Java}
+public static void quick3waySort(Comparable[] arr, int low, int high) {
+    if (high <= low)
+        return;
+    int p1 = low, p2 = low + 1, p3 = high;
+    Comparable v = arr[low];
+    while (p2 <= p3) {
+        int cmp = arr[p2].compareTo(v);
+        if (cmp < 0)
+            CollectionUtils.exchange(arr, p1++, p2++);
+        else if (cmp > 0)
+            CollectionUtils.exchange(arr, p2, p3--);
+        else
+            p2++;
+    }
+    quick3waySort(arr, low, p1 - 1);
+    quick3waySort(arr, p3 + 1, high);
+}
+\end{Java}
+
+\subsection{算法评价}
+
+快速排序的时间复杂度不稳定，如果数组倒序存储元素，你会发现快排需要频繁地进行交换。此外由于需要函数递归，会产生 $O(\log_2 n)$ 的额外空间。
+
+\begin{itemize}
+  \item 时间复杂度: $O(n\log_2 n)$ 最坏 $O(n^2)$。
+  \item 空间复杂度: $O(\log_2 n)$。
+  \item 稳定性: 不稳定。
+\end{itemize}
+
+在绝大多数随机数学模型中，快速排序地效率都高于归并排序，是处于 $O(n\log_2 n)$ 量级排序算法的最佳选择。这主要归功于它能充分利用 cache 缓存(总是扫描临近元素)，我们加载一个数组后，快排进行指针相邻移动的速度是非常快的，而且快排不需要(函数栈以外的)额外空间；这使得在大数据处理上，快排明显由于归并排序。
+
+当然它的缺陷也很明显，不适用于特殊的数据模型，例如倒叙改正序。即使如此，他仍是最主流的通用排序算法。
+
+\newpage
